@@ -136,17 +136,6 @@ enum pe_err {
   PEERR_MAGIC = 9
 };
 
-bool readByte(bounded_buffer *b, std::uint32_t offset, std::uint8_t &out);
-bool readWord(bounded_buffer *b, std::uint32_t offset, std::uint16_t &out);
-bool readDword(bounded_buffer *b, std::uint32_t offset, std::uint32_t &out);
-bool readQword(bounded_buffer *b, std::uint32_t offset, std::uint64_t &out);
-
-bounded_buffer *readFileToFileBuffer(const char *filePath);
-bounded_buffer *
-splitBuffer(bounded_buffer *b, std::uint32_t from, std::uint32_t to);
-void deleteBuffer(bounded_buffer *b);
-uint64_t bufLen(bounded_buffer *b);
-
 struct parsed_pe_internal;
 
 typedef struct _pe_header {
@@ -158,6 +147,18 @@ typedef struct _parsed_pe {
   parsed_pe_internal *internal;
   pe_header peHeader;
 } parsed_pe;
+
+bool readByte(bounded_buffer *b, std::uint32_t offset, std::uint8_t &out);
+bool readWord(bounded_buffer *b, std::uint32_t offset, std::uint16_t &out);
+bool readDword(bounded_buffer *b, std::uint32_t offset, std::uint32_t &out);
+bool readQword(bounded_buffer *b, std::uint32_t offset, std::uint64_t &out);
+bool readBuf(parsed_pe* pe, VA offset, uint8_t* pBuf, std::uint64_t bufSize, std::size_t* pNumBytesRead);
+
+bounded_buffer *readFileToFileBuffer(const char *filePath);
+bounded_buffer *
+splitBuffer(bounded_buffer *b, std::uint32_t from, std::uint32_t to);
+void deleteBuffer(bounded_buffer *b);
+uint64_t bufLen(bounded_buffer *b);
 
 // get parser error status as integer
 std::uint32_t GetPEErr();
