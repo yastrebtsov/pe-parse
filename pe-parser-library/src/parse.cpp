@@ -1924,7 +1924,7 @@ void IterSec(parsed_pe *pe, iterSec cb, void *cbd) {
   return;
 }
 
-bool CalcVAOffset(parsed_pe *pe, VA v, section* pSec, VA* pOff)
+bool CalcVAOffset(parsed_pe *pe, VA v, section* pSec, std::uint32_t* pOff)
 {
   // find this VA in a section
   if (!getSecForVA(pe->internal->secs, v, *pSec)) {
@@ -1939,7 +1939,7 @@ bool CalcVAOffset(parsed_pe *pe, VA v, section* pSec, VA* pOff)
 
 bool ReadByteAtVA(parsed_pe *pe, VA v, ::uint8_t &b) {
   section s;
-  VA off = 0;
+  uint32_t off = 0;
   if (CalcVAOffset(pe, v, &s, &off))
     return readByte(s.sectionData, off, b);
 
@@ -1947,13 +1947,13 @@ bool ReadByteAtVA(parsed_pe *pe, VA v, ::uint8_t &b) {
 }
 
 bool readBuf(parsed_pe* pe, VA offset, uint8_t* pBuf,
-  std::uint64_t bufSize, std::size_t* pNumBytesRead) {
+  std::uint32_t bufSize, std::uint32_t* pNumBytesRead) {
 
   *pNumBytesRead = 0;
 
   // find this VA in a section
   section s;
-  VA off = 0;
+  uint32_t off = 0;
   if (!CalcVAOffset(pe, offset, &s, &off))
     return false;
 
@@ -1967,12 +1967,13 @@ bool readBuf(parsed_pe* pe, VA offset, uint8_t* pBuf,
     return false;
   }
 
-  std::uint64_t actualBytesToRead = std::min(bufSize, b->bufLen - off);
+  std::size_t actualBytesToRead = std::min(bufSize, b->bufLen - off);
 
   if (!memcpy(pBuf, b->buf + off, actualBytesToRead)) {
     PE_ERR(PEERR_MEM);
     return false;
   }
+
   *pNumBytesRead = actualBytesToRead;
 
   return true;
