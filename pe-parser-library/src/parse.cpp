@@ -1736,7 +1736,7 @@ bool getSymbolTable(parsed_pe *p) {
   return true;
 }
 
-parsed_pe *ParsePEFromFile(const char *filePath) {
+parsed_pe *ParsePEFromFile(const char *filePath, bool ignoreTableParseErrors) {
   // First, create a new parsed_pe structure
   // We pass std::nothrow parameter to new so in case of failure it returns
   // nullptr instead of throwing exception std::bad_alloc.
@@ -1783,7 +1783,7 @@ parsed_pe *ParsePEFromFile(const char *filePath) {
     return nullptr;
   }
 
-  if (!getResources(remaining, file, p->internal->secs, p->internal->rsrcs)) {
+  if (!getResources(remaining, file, p->internal->secs, p->internal->rsrcs) && !ignoreTableParseErrors) {
     deleteBuffer(remaining);
     deleteBuffer(p->fileBuffer);
     delete p;
@@ -1792,7 +1792,7 @@ parsed_pe *ParsePEFromFile(const char *filePath) {
   }
 
   // Get exports
-  if (!getExports(p)) {
+  if (!getExports(p) && !ignoreTableParseErrors) {
     deleteBuffer(remaining);
     deleteBuffer(p->fileBuffer);
     delete p;
@@ -1801,7 +1801,7 @@ parsed_pe *ParsePEFromFile(const char *filePath) {
   }
 
   // Get relocations, if exist
-  if (!getRelocations(p)) {
+  if (!getRelocations(p) && !ignoreTableParseErrors) {
     deleteBuffer(remaining);
     deleteBuffer(p->fileBuffer);
     delete p;
@@ -1810,7 +1810,7 @@ parsed_pe *ParsePEFromFile(const char *filePath) {
   }
 
   // Get imports
-  if (!getImports(p)) {
+  if (!getImports(p) && !ignoreTableParseErrors) {
     deleteBuffer(remaining);
     deleteBuffer(p->fileBuffer);
     delete p;
@@ -1818,7 +1818,7 @@ parsed_pe *ParsePEFromFile(const char *filePath) {
   }
 
   // Get symbol table
-  if (!getSymbolTable(p)) {
+  if (!getSymbolTable(p) && !ignoreTableParseErrors) {
     deleteBuffer(remaining);
     deleteBuffer(p->fileBuffer);
     delete p;

@@ -171,7 +171,8 @@ std::string GetPEErrString();
 std::string GetPEErrLoc();
 
 // get a PE parse context from a file
-parsed_pe *ParsePEFromFile(const char *filePath);
+// * ignoreTableParseErrors - ignore any errors in table parsing. Some malware has corrupted data dictionaries.
+parsed_pe *ParsePEFromFile(const char *filePath, bool ignoreTableParseErrors = false);
 
 // destruct a PE context
 void DestructParsedPE(parsed_pe *p);
